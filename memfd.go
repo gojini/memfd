@@ -9,7 +9,7 @@ import (
 	"os"
 	"syscall"
 
-	"github.com/justincormack/go-memfd/msyscall"
+	"gojini.dev/memfd/msyscall"
 )
 
 var (
