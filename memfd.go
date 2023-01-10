@@ -1,3 +1,4 @@
+//go:build linux
 // +build linux
 
 // Package memfd provides a Go library for working with Linux memfd memory file descriptors.
@@ -12,36 +13,40 @@ import (
 	"gojini.dev/memfd/msyscall"
 )
 
-var (
-	// ErrTooBig is returned if you try to map a memfd over 2GB on a 32 bit platform
-	ErrTooBig = errors.New("memfd too large for slice")
-)
+// ErrTooBig is returned if you try to map a memfd over 2GB on a 32 bit platform.
+var ErrTooBig = errors.New("memfd too large for slice")
 
 const (
-	// Cloexec sets the cloexec flag on the memfd when opened
+	// Cloexec sets the cloexec flag on the memfd when opened.
 	Cloexec = msyscall.MFD_CLOEXEC
-	// AllowSealing allows seal operations to be performed
+
+	// AllowSealing allows seal operations to be performed.
 	AllowSealing = msyscall.MFD_ALLOW_SEALING
 
-	// SealSeal means no more seal operations can be performed
+	// SealSeal means no more seal operations can be performed.
 	SealSeal = msyscall.F_SEAL_SEAL
-	// SealShrink means the memfd may no longer shrink
+
+	// SealShrink means the memfd may no longer shrink.
 	SealShrink = msyscall.F_SEAL_SHRINK
-	// SealGrow means the memfd may no longer grow
+
+	// SealGrow means the memfd may no longer grow.
 	SealGrow = msyscall.F_SEAL_GROW
-	// SealWrite means the memfd may no longer be written to
+
+	// SealWrite means the memfd may no longer be written to.
 	SealWrite = msyscall.F_SEAL_WRITE
-	// SealAll means the memfd is now immutable
+
+	// SealAll means the memfd is now immutable.
 	SealAll = SealSeal | SealShrink | SealGrow | SealWrite
 )
 
-// Memfd is the type for an memory fd, an os.File with extra methods
+// Memfd is the type for an memory fd, an os.File with extra methods.
 type Memfd struct {
 	*os.File
 	b []byte
 }
 
-// Create creates a memfd and sets the flags to the most common options, Cloexec and AllowSealing.
+// Create creates a memfd and sets the flags to the most common options, Cloexec
+// and AllowSealing.
 func Create() (*Memfd, error) {
 	return CreateNameFlags("", Cloexec|AllowSealing)
 }
@@ -60,10 +65,10 @@ func CreateNameFlags(name string, flags uint) (*Memfd, error) {
 // New creates a memfd object from a file descriptor, eg passed via a pipe or to an exec.
 // Will return an error if the file was not a memfd, ie cannot have seals.
 func New(fd uintptr) (*Memfd, error) {
-	_, err := msyscall.FcntlSeals(fd)
-	if err != nil {
+	if _, err := msyscall.FcntlSeals(fd); err != nil {
 		return nil, err
 	}
+
 	// TODO(justin) read name with readlink /proc/self/fd
 	mfd := Memfd{os.NewFile(uintptr(fd), ""), []byte{}}
 	return &mfd, nil
@@ -97,7 +102,7 @@ func (mfd *Memfd) SetCloexec() {
 	_ = msyscall.FcntlCloexec(mfd.Fd(), 1)
 }
 
-// seals is an internal function that returns seals or an error
+// seals is an internal function that returns seals or an error.
 func (mfd *Memfd) seals() (int, error) {
 	return msyscall.FcntlSeals(mfd.Fd())
 }
@@ -118,7 +123,7 @@ func (mfd *Memfd) SetSeals(seals int) error {
 	return msyscall.FcntlSetSeals(mfd.Fd(), seals)
 }
 
-// IsImmutable returns true if the memfd is fully immutable, all seals set
+// IsImmutable returns true if the memfd is fully immutable, all seals set.
 func (mfd *Memfd) IsImmutable() bool {
 	seals, err := msyscall.FcntlSeals(mfd.Fd())
 	if err != nil {
@@ -196,9 +201,10 @@ func (mfd *Memfd) Remap() ([]byte, error) {
 	if cap(mfd.b) == 0 {
 		return mfd.Map()
 	}
-	err := mfd.Unmap()
-	if err != nil {
+
+	if err := mfd.Unmap(); err != nil {
 		return []byte{}, err
 	}
+
 	return mfd.Map()
 }

@@ -1,3 +1,4 @@
+//go:build linux
 // +build linux
 
 // msyscall is a package for the raw syscall handling for memfd_create
@@ -10,7 +11,7 @@ import (
 	"unsafe"
 )
 
-// Linux kernel constants
+// Linux kernel constants.
 const (
 	MFD_CLOEXEC       uint = 1
 	MFD_ALLOW_SEALING uint = 2
@@ -27,7 +28,7 @@ const (
 )
 
 // MemfdCreate exposes the raw memfd_create syscall which returns a
-// file descriptor
+// file descriptor.
 func MemfdCreate(name string, flags uint) (fd uintptr, err error) {
 	var _p0 *byte
 	_p0, err = syscall.BytePtrFromString(name)
@@ -42,7 +43,7 @@ func MemfdCreate(name string, flags uint) (fd uintptr, err error) {
 }
 
 // FcntlSeals calls the raw fcntl syscall to get the current seals
-// it will return EINVAL if the file does not support sealing
+// it will return EINVAL if the file does not support sealing.
 func FcntlSeals(fd uintptr) (seals int, err error) {
 	r1, _, e1 := syscall.Syscall(SYS_FCNTL, fd, uintptr(F_GET_SEALS), uintptr(0))
 	if e1 != 0 {

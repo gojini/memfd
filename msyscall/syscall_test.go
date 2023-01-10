@@ -7,7 +7,9 @@ import (
 )
 
 func TestSyscalls(t *testing.T) {
-	fd, err := MemfdCreate("test", MFD_CLOEXEC|MFD_ALLOW_SEALING)
+	t.Parallel()
+
+	fd, err := MemfdCreate("testSyscalls", MFD_CLOEXEC|MFD_ALLOW_SEALING)
 	if err != nil {
 		t.Errorf("MemfdCreate failed: %v", err)
 	}
@@ -33,7 +35,9 @@ func TestSyscalls(t *testing.T) {
 }
 
 func TestCloexec(t *testing.T) {
-	fd, err := MemfdCreate("test", MFD_CLOEXEC|MFD_ALLOW_SEALING)
+	t.Parallel()
+
+	fd, err := MemfdCreate("testCloexec", MFD_CLOEXEC|MFD_ALLOW_SEALING)
 	if err != nil {
 		t.Errorf("MemfdCreate failed: %v", err)
 	}
@@ -51,6 +55,8 @@ func TestCloexec(t *testing.T) {
 }
 
 func TestNotMemfdGetSeals(t *testing.T) {
+	t.Parallel()
+
 	file, err := os.Open("/dev/null")
 	if err != nil {
 		t.Errorf("Cannot open /dev/null")
