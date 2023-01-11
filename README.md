@@ -1,6 +1,6 @@
 ## Go Memfd library
 
-[![GoDoc](https://godoc.org/gojini.dev/memfd?status.svg)](https://godoc.org/gojini.dev/memfd)
+[![GoDoc](https://godoc.org/gojini.dev/memfd?status.svg)](https://godoc.org/gojini.dev/memfd) [![codecov](https://codecov.io/gh/gojini/memfd/branch/master/graph/badge.svg?token=FfLU6u7azn)](https://codecov.io/gh/gojini/memfd) [![lint](https://github.com/gojini/memfd/actions/workflows/lint.yml/badge.svg)](https://github.com/gojini/memfd/actions/workflows/lint.yml) [![test](https://github.com/gojini/memfd/actions/workflows/test.yml/badge.svg)](https://github.com/gojini/memfd/actions/workflows/test.yml) [![CodeQL](https://github.com/gojini/memfd/actions/workflows/codeql.yml/badge.svg)](https://github.com/gojini/memfd/actions/workflows/codeql.yml)
 
 This is a Go library for working with Linux memfd, memory file descriptors.
 
