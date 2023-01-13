@@ -16,31 +16,31 @@ func TestLoadFromEmbedFS(t *testing.T) {
 
 	name, closer, err := memfd.LoadEmbedFile(testContent, "randomFile")
 	if err == nil {
-		t.Fail()
+		t.Error("missing embedded file was loaded successfully")
 	}
 
 	if name != "" {
-		t.Fail()
+		t.Errorf("name was not empty: %s", name)
 	}
 
 	if closer != nil {
-		t.Fail()
+		t.Error("closer was non-nil")
 	}
 
 	name, closer, err = memfd.LoadEmbedFile(testContent, "README.md")
 	if err != nil {
-		t.Fail()
+		t.Errorf("failed to load embedded file: %s", err)
 	}
 
 	if !strings.HasPrefix(name, "/proc/self/fd/") {
-		t.Fail()
+		t.Errorf("incorrect prefix in the path: %s", name)
 	}
 
 	if closer == nil {
-		t.Fail()
+		t.Error("closer was nil")
 	}
 
-	if e := closer(); e != nil {
-		t.Error(e)
+	if err := closer(); err != nil {
+		t.Errorf("failed to close: %s", err)
 	}
 }
